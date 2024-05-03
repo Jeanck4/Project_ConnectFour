@@ -74,22 +74,50 @@ myfont = pygame.font.SysFont("monospace", 75)
 
 
 def verifica_vitoria(tabuleiro):
-    aux_1 = 0
-    aux_2 = 0
+    # Verifica vitória nas linhas
+    for r in range(ROW_COUNT):
+        for c in range(COLUMN_COUNT - 3):
+            if tabuleiro[r][c] == 1 and tabuleiro[r][c+1] == 1 and tabuleiro[r][c+2] == 1 and tabuleiro[r][c+3] == 1:
+                desenhar_mensagem("Player 1 ganhou - VERMELHO")
+                return True
+            elif tabuleiro[r][c] == 2 and tabuleiro[r][c+1] == 2 and tabuleiro[r][c+2] == 2 and tabuleiro[r][c+3] == 2:
+                desenhar_mensagem("Player 2 ganhou - AMARELO")
+                return True
 
+    # Verifica vitória nas colunas
     for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT):
-            if tabuleiro[c][r] == 1:
-                aux_1 += 1
-                if aux_1 == 4:
-                    desenhar_mensagem("Player 1 ganhou - VERMELHO")
+        for r in range(ROW_COUNT - 3):
+            if tabuleiro[r][c] == 1 and tabuleiro[r+1][c] == 1 and tabuleiro[r+2][c] == 1 and tabuleiro[r+3][c] == 1:
+                desenhar_mensagem("Player 1 ganhou - VERMELHO")
+                return True
+            elif tabuleiro[r][c] == 2 and tabuleiro[r+1][c] == 2 and tabuleiro[r+2][c] == 2 and tabuleiro[r+3][c] == 2:
+                desenhar_mensagem("Player 2 ganhou - AMARELO")
+                return True
 
-            if tabuleiro[c][r] == 2:
-                aux_2 += 1
-                if aux_2 == 4:
-                    desenhar_mensagem("Player 2 ganhou - AMARELO")
+    # Verifica vitória nas diagonais \
+    for r in range(ROW_COUNT - 3):
+        for c in range(COLUMN_COUNT - 3):
+            if tabuleiro[r][c] == 1 and tabuleiro[r+1][c+1] == 1 and tabuleiro[r+2][c+2] == 1 and tabuleiro[r+3][c+3] == 1:
+                desenhar_mensagem("Player 1 ganhou - VERMELHO")
+                return True
+            elif tabuleiro[r][c] == 2 and tabuleiro[r+1][c+1] == 2 and tabuleiro[r+2][c+2] == 2 and tabuleiro[r+3][c+3] == 2:
+                desenhar_mensagem("Player 2 ganhou - AMARELO")
+                return True
 
-while not game_over:
+    # Verifica vitória nas diagonais /
+    for r in range(ROW_COUNT - 3):
+        for c in range(3, COLUMN_COUNT):
+            if tabuleiro[r][c] == 1 and tabuleiro[r+1][c-1] == 1 and tabuleiro[r+2][c-2] == 1 and tabuleiro[r+3][c-3] == 1 and tabuleiro[r+3][c-3] == 1:
+                desenhar_mensagem("Player 1 ganhou - VERMELHO")
+                return True
+            elif tabuleiro[r][c] == 2 and tabuleiro[r+1][c-1] == 2 and tabuleiro[r+2][c-2] == 2 and tabuleiro[r+3][c-3] == 2:
+                desenhar_mensagem("Player 2 ganhou - AMARELO")
+                return True
+
+    return False
+
+
+while game_over == False:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -104,10 +132,13 @@ while not game_over:
                 linha = proxima_linha_livre(tabuleiro, col)
                 if turn == 0:
                     soltar_peca(tabuleiro, linha, col, 1)
-                    verifica_vitoria(tabuleiro)
+                    if(verifica_vitoria(tabuleiro)):
+                        game_over = True
+
                 else:
                     soltar_peca(tabuleiro, linha, col, 2)
-
+                    if (verifica_vitoria(tabuleiro)):
+                        game_over = True
 
                 desenhar_tabuleiro(tabuleiro)
 
