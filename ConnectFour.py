@@ -1,122 +1,91 @@
-import numpy as np
-import pygame
-import sys
-import math
+import numpy as np #pip install numpy
+import pygame #pip install pygame
+import sys #pip install sys
+import math #pip install math
 
-# Constantes
-ROW_COUNT = 6
-COLUMN_COUNT = 6
-SQUARESIZE = 100
-width = COLUMN_COUNT * SQUARESIZE
-height = (ROW_COUNT + 1) * SQUARESIZE
-size = (width, height)
-RADIUS = int(SQUARESIZE / 2 - 5)
+#Variáveis para definir tamanho do jogo:
+linha = 6
+coluna = 7
+tamanhoTela = 100
+larguraTela = coluna * tamanhoTela
+alturaTela = (linha + 1) * tamanhoTela
+tamanho = (larguraTela, alturaTela)
+circulos = int(tamanhoTela / 2 - 5)
 
-# Cores
+#Variáveis Cores:
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
 
-def criar_tabuleiro():
-    return np.zeros((ROW_COUNT, COLUMN_COUNT))
-
-
 def soltar_peca(tabuleiro, linha, coluna, peca):
     tabuleiro[linha][coluna] = peca
 
-
 def coluna_valida(tabuleiro, coluna):
-    return tabuleiro[ROW_COUNT - 1][coluna] == 0
-
+    return tabuleiro[linha - 1][coluna] == 0
 
 def proxima_linha_livre(tabuleiro, coluna):
-    for r in range(ROW_COUNT):
+    for r in range(linha):
         if tabuleiro[r][coluna] == 0:
             return r
 
-
 def desenhar_tabuleiro(tabuleiro):
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT):
-            pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))
+    for c in range(coluna):
+        for r in range(linha):
+            pygame.draw.rect(screen, BLUE, (c * tamanhoTela, r * tamanhoTela + tamanhoTela, tamanhoTela, tamanhoTela))
             pygame.draw.circle(screen, WHITE, (
-            int(c * SQUARESIZE + SQUARESIZE / 2), int(r * SQUARESIZE + SQUARESIZE + SQUARESIZE / 2)), RADIUS)
+            int(c * tamanhoTela + tamanhoTela / 2), int(r * tamanhoTela + tamanhoTela + tamanhoTela / 2)), circulos)
 
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT):
+    for c in range(coluna):
+        for r in range(linha):
             if tabuleiro[r][c] == 1:
                 pygame.draw.circle(screen, RED, (
-                int(c * SQUARESIZE + SQUARESIZE / 2), height - int(r * SQUARESIZE + SQUARESIZE / 2)), RADIUS)
+                int(c * tamanhoTela + tamanhoTela / 2), alturaTela - int(r * tamanhoTela + tamanhoTela / 2)), circulos)
             elif tabuleiro[r][c] == 2:
                 pygame.draw.circle(screen, YELLOW, (
-                int(c * SQUARESIZE + SQUARESIZE / 2), height - int(r * SQUARESIZE + SQUARESIZE / 2)), RADIUS)
+                int(c * tamanhoTela + tamanhoTela / 2), alturaTela - int(r * tamanhoTela + tamanhoTela / 2)), circulos)
     pygame.display.update()
 
 def desenhar_mensagem(texto):
     myfont = pygame.font.Font(None, 36)
     text = myfont.render(texto, True, (255, 255, 255))  # Branco
-    screen.blit(text,(0, 0))  # Ajuste a posição conforme necessário
+    screen.blit(text,(0, 0))
     pygame.display.update()
 
-
-tabuleiro = criar_tabuleiro()
-game_over = False
-turn = 0
-
-pygame.init()
-screen = pygame.display.set_mode(size)
-desenhar_tabuleiro(tabuleiro)
-pygame.display.update()
-
-myfont = pygame.font.SysFont("monospace", 75)
-
-
 def verifica_vitoria(tabuleiro):
-    # Verifica vitória nas linhas
-    for r in range(ROW_COUNT):
-        for c in range(COLUMN_COUNT - 3):
-            if tabuleiro[r][c] == 1 and tabuleiro[r][c+1] == 1 and tabuleiro[r][c+2] == 1 and tabuleiro[r][c+3] == 1:
-                desenhar_mensagem("Player 1 ganhou - VERMELHO")
-                return True
-            elif tabuleiro[r][c] == 2 and tabuleiro[r][c+1] == 2 and tabuleiro[r][c+2] == 2 and tabuleiro[r][c+3] == 2:
-                desenhar_mensagem("Player 2 ganhou - AMARELO")
-                return True
-
-    # Verifica vitória nas colunas
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT - 3):
-            if tabuleiro[r][c] == 1 and tabuleiro[r+1][c] == 1 and tabuleiro[r+2][c] == 1 and tabuleiro[r+3][c] == 1:
-                desenhar_mensagem("Player 1 ganhou - VERMELHO")
-                return True
-            elif tabuleiro[r][c] == 2 and tabuleiro[r+1][c] == 2 and tabuleiro[r+2][c] == 2 and tabuleiro[r+3][c] == 2:
-                desenhar_mensagem("Player 2 ganhou - AMARELO")
-                return True
-
-    # Verifica vitória nas diagonais \
-    for r in range(ROW_COUNT - 3):
-        for c in range(COLUMN_COUNT - 3):
-            if tabuleiro[r][c] == 1 and tabuleiro[r+1][c+1] == 1 and tabuleiro[r+2][c+2] == 1 and tabuleiro[r+3][c+3] == 1:
-                desenhar_mensagem("Player 1 ganhou - VERMELHO")
-                return True
-            elif tabuleiro[r][c] == 2 and tabuleiro[r+1][c+1] == 2 and tabuleiro[r+2][c+2] == 2 and tabuleiro[r+3][c+3] == 2:
-                desenhar_mensagem("Player 2 ganhou - AMARELO")
-                return True
-
-    # Verifica vitória nas diagonais /
-    for r in range(ROW_COUNT - 3):
-        for c in range(3, COLUMN_COUNT):
-            if tabuleiro[r][c] == 1 and tabuleiro[r+1][c-1] == 1 and tabuleiro[r+2][c-2] == 1 and tabuleiro[r+3][c-3] == 1 and tabuleiro[r+3][c-3] == 1:
-                desenhar_mensagem("Player 1 ganhou - VERMELHO")
-                return True
-            elif tabuleiro[r][c] == 2 and tabuleiro[r+1][c-1] == 2 and tabuleiro[r+2][c-2] == 2 and tabuleiro[r+3][c-3] == 2:
-                desenhar_mensagem("Player 2 ganhou - AMARELO")
-                return True
-
+    for r in range(linha):
+        for c in range(coluna):
+            #Verifica horizontalmente:
+            if c <= coluna - 4:
+                if tabuleiro[r][c] == tabuleiro[r][c+1] == tabuleiro[r][c+2] == tabuleiro[r][c+3] != 0:
+                    desenhar_mensagem(f"Player {tabuleiro[r][c]} ganhou")
+                    return True
+            #Verifica verticalmente:
+            if r <= linha - 4:
+                if tabuleiro[r][c] == tabuleiro[r+1][c] == tabuleiro[r+2][c] == tabuleiro[r+3][c] != 0:
+                    desenhar_mensagem(f"Player {tabuleiro[r][c]} ganhou")
+                    return True
+            #Verifica diagonalmente (direita):
+            if c <= coluna - 4 and r <= linha - 4:
+                if tabuleiro[r][c] == tabuleiro[r+1][c+1] == tabuleiro[r+2][c+2] == tabuleiro[r+3][c+3] != 0:
+                    desenhar_mensagem(f"Player {tabuleiro[r][c]} ganhou")
+                    return True
+            #Verifica diagonalmente (esquerda):
+            if c >= 3 and r <= linha - 4:
+                if tabuleiro[r][c] == tabuleiro[r+1][c-1] == tabuleiro[r+2][c-2] == tabuleiro[r+3][c-3] != 0:
+                    desenhar_mensagem(f"Player {tabuleiro[r][c]} ganhou")
+                    return True
     return False
 
+tabuleiro = np.zeros((linha, coluna))
+game_over = False
+turn = 0
+pygame.init()
+screen = pygame.display.set_mode(tamanho)
+desenhar_tabuleiro(tabuleiro)
 
+#Parte onde ocorre o local que o jogador vai colocar as peças:
 while game_over == False:
 
     for event in pygame.event.get():
@@ -124,19 +93,17 @@ while game_over == False:
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # Pega a entrada do jogador
             posx = event.pos[0]
-            col = int(math.floor(posx / SQUARESIZE))
+            col = int(math.floor(posx / tamanhoTela))
 
             if coluna_valida(tabuleiro, col):
-                linha = proxima_linha_livre(tabuleiro, col)
+                lin = proxima_linha_livre(tabuleiro, col)
                 if turn == 0:
-                    soltar_peca(tabuleiro, linha, col, 1)
+                    soltar_peca(tabuleiro, lin, col, 1)
                     if(verifica_vitoria(tabuleiro)):
                         game_over = True
-
                 else:
-                    soltar_peca(tabuleiro, linha, col, 2)
+                    soltar_peca(tabuleiro, lin, col, 2)
                     if (verifica_vitoria(tabuleiro)):
                         game_over = True
 
