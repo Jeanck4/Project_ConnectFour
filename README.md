@@ -1,4 +1,4 @@
---------------------------------------------------------- Conect four --------------------------------------------------------- 
+--------------------------------------------------------- Conect four ---------------------------------------------------------                                                
 Descrição do Jogo:
 Conecta Quatro é um jogo de estratégia para dois jogadores, onde o objetivo é ser o primeiro a conectar quatro peças da mesma cor em linha reta, seja na vertical, horizontal ou diagonal, em um tabuleiro vertical de 6 linhas e 7 colunas.
 
