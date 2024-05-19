@@ -1,7 +1,7 @@
 # Equipe 7 - André Felipe, Jean Carlos, Nicole Fernanda e Thais Jandre
 # BUSCA COMPETITIVA
-import numpy as np
-import pygame
+import numpy as np #pip install numpy
+import pygame #pip install pygame
 import sys
 import math
 
